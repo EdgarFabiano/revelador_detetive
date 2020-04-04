@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "87934744369",
+    "firebase_url": "https://revelador-detetive.firebaseio.com",
+    "project_id": "revelador-detetive",
+    "storage_bucket": "revelador-detetive.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:87934744369:android:f5f1c46827a8e2bd5ea210",
+        "android_client_info": {
+          "package_name": "edgar.com.revelador_detetive"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "87934744369-grt6qgqo8ri5mhi9ldj10euulkleda2s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXLnf9DinQ2L3fvzvkK_qVZGjzGB7ipo0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "87934744369-grt6qgqo8ri5mhi9ldj10euulkleda2s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
