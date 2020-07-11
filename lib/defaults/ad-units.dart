@@ -7,40 +7,62 @@ import 'constants.dart';
 class AdUnits {
 
   static final String androidApiKey = "ca-app-pub-9921693044196842~1268647503";
-  static final String androidConcursosBanner = "ca-app-pub-9921693044196842/9987723705";
-  static final String androidSorteioInterstitial = "ca-app-pub-9921693044196842/2004457756";
+  static final String androidBanner = "ca-app-pub-9921693044196842/9987723705";
+  static final String androidInterstitial = "ca-app-pub-9921693044196842/2004457756";
 
-  static BannerAd _concursosBanner;
-  static BannerAd get concursosBanner => _concursosBanner;
+  static BannerAd _banner;
+  static BannerAd get banner => _banner;
 
-  static double _bannerPadding = 50;
-  static double get bannerPadding => _bannerPadding;
+  static InterstitialAd _interstitial;
+  static InterstitialAd get interstitial => _interstitial;
 
   static void instatiateBannerAd() {
-    _concursosBanner = BannerAd(
-      size: AdSize.banner,
-      adUnitId: AdUnits.getConcursosBannerId(),
+    _banner = BannerAd(
+      size: AdSize.fullBanner,
+      adUnitId: AdUnits.getBannerId(),
       targetingInfo: MobileAdTargetingInfo(
           testDevices: [
             "30B81A47E3005ADC205D4BCECC4450E1",
-            "F2EFF4F833C2BA2BE93D3A4A1098A125"
+            "F2EFF4F833C2BA2BE93D3A4A1098A125",
+            "420CBC41672019D607F67499A344FD38"
+          ]
+      ),
+    );
+  }
+
+  static void instatiateInterstitialAd() {
+    _interstitial = InterstitialAd(
+      adUnitId: AdUnits.getInterstitialId(),
+      targetingInfo: MobileAdTargetingInfo(
+          testDevices: [
+            "30B81A47E3005ADC205D4BCECC4450E1",
+            "F2EFF4F833C2BA2BE93D3A4A1098A125",
+            "420CBC41672019D607F67499A344FD38"
           ]
       ),
     );
   }
 
   static void showBannerAd() {
-    _concursosBanner.isLoaded().then((isLoaded) {
+    _banner.isLoaded().then((isLoaded) {
       if (isLoaded) {
-        _concursosBanner.show();
-        _bannerPadding = 50;
+        _banner.show();
       } else {
         instatiateBannerAd();
-        _concursosBanner.load();
-        _bannerPadding = 0;
+        _banner.load();
       }
     });
+  }
 
+  static void showInterstitialAd() {
+    _interstitial.isLoaded().then((isLoaded) {
+      if (isLoaded) {
+        _interstitial.show();
+      } else {
+        instatiateInterstitialAd();
+        _interstitial.load();
+      }
+    });
   }
 
   static String getAppId() {
@@ -50,20 +72,16 @@ class AdUnits {
     return FirebaseAdMob.testAppId;
   }
 
-  static String getConcursosBannerId() {
+  static String getBannerId() {
     if (!Constants.isTesting) {
-      if (Platform.isAndroid) {
-        return androidConcursosBanner;
-      }
+      return androidBanner;
     }
     return BannerAd.testAdUnitId;
   }
 
-  static String getSorteioInterstitialId() {
+  static String getInterstitialId() {
     if (!Constants.isTesting) {
-      if (Platform.isAndroid) {
-        return androidSorteioInterstitial;
-      }
+      return androidInterstitial;
     }
     return InterstitialAd.testAdUnitId;
   }

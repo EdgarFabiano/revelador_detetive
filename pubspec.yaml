@@ -19,6 +19,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  dynamic_theme: ^1.0.0
   firebase_admob: ^0.9.0+7
   firebase_analytics: 5.0.2
   qrscan: ^0.2.17
