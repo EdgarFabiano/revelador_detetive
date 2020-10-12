@@ -21,11 +21,7 @@ class AdUnits {
       size: AdSize.fullBanner,
       adUnitId: AdUnits.getBannerId(),
       targetingInfo: MobileAdTargetingInfo(
-          testDevices: [
-            "30B81A47E3005ADC205D4BCECC4450E1",
-            "F2EFF4F833C2BA2BE93D3A4A1098A125",
-            "420CBC41672019D607F67499A344FD38"
-          ]
+        childDirected: true,
       ),
     );
   }
@@ -34,11 +30,7 @@ class AdUnits {
     _interstitial = InterstitialAd(
       adUnitId: AdUnits.getInterstitialId(),
       targetingInfo: MobileAdTargetingInfo(
-          testDevices: [
-            "30B81A47E3005ADC205D4BCECC4450E1",
-            "F2EFF4F833C2BA2BE93D3A4A1098A125",
-            "420CBC41672019D607F67499A344FD38"
-          ]
+        childDirected: true,
       ),
     );
   }
