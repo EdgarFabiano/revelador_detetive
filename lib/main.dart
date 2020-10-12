@@ -8,6 +8,7 @@ import 'home-page.dart';
 import 'defaults/ad-units.dart';
 
 void main()  {
+  WidgetsFlutterBinding.ensureInitialized();
   FirebaseAdMob.instance.initialize(appId: AdUnits.getAppId());
   runApp(MyApp());
 }
