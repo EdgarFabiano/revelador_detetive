@@ -1,7 +1,9 @@
 import 'dart:io';
 
-import 'package:firebase_admob/firebase_admob.dart';
+import 'package:flutter/widgets.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import '../revelador_banner_ad.dart';
 import 'constants.dart';
 
 class AdUnits {
@@ -10,71 +12,110 @@ class AdUnits {
   static final String androidBanner = "ca-app-pub-9921693044196842/9987723705";
   static final String androidInterstitial = "ca-app-pub-9921693044196842/2004457756";
 
-  static BannerAd _banner;
-  static BannerAd get banner => _banner;
+  static const int maxFailedLoadAttempts = 3;
+  static int _numInterstitialLoadAttempts = 0;
 
-  static InterstitialAd _interstitial;
-  static InterstitialAd get interstitial => _interstitial;
+  static final AdRequest request = AdRequest();
 
-  static void instatiateBannerAd() {
-    _banner = BannerAd(
-      size: AdSize.fullBanner,
-      adUnitId: AdUnits.getBannerId(),
-      targetingInfo: MobileAdTargetingInfo(
-        childDirected: true,
-      ),
+  static BannerAd? _banner;
+  static BannerAd? get banner => _banner;
+
+  static InterstitialAd? _interstitial;
+  static InterstitialAd? get interstitial => _interstitial;
+
+  static var _fullScreenContentCallback = FullScreenContentCallback(
+    onAdShowedFullScreenContent: (InterstitialAd ad) =>
+        print('$ad onAdShowedFullScreenContent.'),
+    onAdDismissedFullScreenContent: (InterstitialAd ad) {
+      print('$ad onAdDismissedFullScreenContent.');
+      ad.dispose();
+      createInterstitialAd();
+    },
+    onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+      print('$ad onAdFailedToShowFullScreenContent: $error');
+      ad.dispose();
+      createInterstitialAd();
+    },
+  );
+
+/*banner*/
+  static ReveladorBannerAd getBannerAd(String id) {
+    ReveladorBannerAd banner = ReveladorBannerAd(
+      adUnitId: id,
+      request: AdManagerAdRequest(),
+      listener: AdManagerBannerAdListener(onAdLoaded: (Ad ad) {
+        print('$ad loaded.');
+      }, onAdFailedToLoad: (Ad ad, LoadAdError error) {
+        print('$ad Failed To Load: $error');
+        ad.dispose();
+      }, onAdOpened: (Ad ad) {
+        print('$ad Ad Opened.');
+      }, onAdClosed: (Ad ad) {
+        print('$ad Ad Closed.');
+        ad.dispose();
+      }, onAdImpression: (Ad ad) {
+        print('$ad Ad Impression.');
+      }, onAdClicked: (Ad ad) {
+        print('$ad Ad Clicked.');
+      }),
+      size: AdSize.largeBanner,
     );
+    return banner;
   }
 
-  static void instatiateInterstitialAd() {
-    _interstitial = InterstitialAd(
-      adUnitId: AdUnits.getInterstitialId(),
-      targetingInfo: MobileAdTargetingInfo(
-        childDirected: true,
-      ),
-    );
+  static Widget getBannerAdWidget(ReveladorBannerAd bannerAd) {
+    if (bannerAd.isLoaded) {
+      return Container(
+        child: AdWidget(ad: bannerAd),
+        width: bannerAd.size.width.toDouble(),
+        height: bannerAd.size.height.toDouble(),
+        alignment: Alignment.center,
+      );
+    }
+    return SizedBox.shrink();
   }
 
-  static void showBannerAd() {
-    _banner.isLoaded().then((isLoaded) {
-      if (isLoaded) {
-        _banner.show();
-      } else {
-        instatiateBannerAd();
-        _banner.load();
-      }
-    });
+  static void createInterstitialAd() {
+    InterstitialAd.load(
+        adUnitId: androidInterstitial,
+        request: request,
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            print('$ad loaded');
+            _interstitial = ad;
+            _interstitial!.fullScreenContentCallback =
+                _fullScreenContentCallback;
+            _numInterstitialLoadAttempts = 0;
+            _interstitial!.setImmersiveMode(true);
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            print('InterstitialAd failed to load: $error.');
+            _numInterstitialLoadAttempts += 1;
+            _interstitial = null;
+            if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
+              createInterstitialAd();
+            }
+          },
+        ));
   }
 
   static void showInterstitialAd() {
-    _interstitial.isLoaded().then((isLoaded) {
-      if (isLoaded) {
-        _interstitial.show();
-      } else {
-        instatiateInterstitialAd();
-        _interstitial.load();
+      if (_interstitial == null) {
+        print('Warning: attempt to show interstitial before loaded.');
+        return;
       }
-    });
+      _interstitial!.show();
   }
 
   static String getAppId() {
-    if (Platform.isAndroid) {
       return androidApiKey;
-    }
-    return FirebaseAdMob.testAppId;
   }
 
   static String getBannerId() {
-    if (!Constants.isTesting) {
       return androidBanner;
-    }
-    return BannerAd.testAdUnitId;
   }
 
   static String getInterstitialId() {
-    if (!Constants.isTesting) {
       return androidInterstitial;
-    }
-    return InterstitialAd.testAdUnitId;
   }
 }

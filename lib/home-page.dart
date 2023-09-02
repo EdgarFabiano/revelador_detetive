@@ -1,12 +1,13 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:qrscan/qrscan.dart' as scanner;
+import 'package:permission_handler/permission_handler.dart';
+import 'package:revelador_detetive/defaults/strings.dart';
+import 'package:revelador_detetive/revelador_banner_ad.dart';
+import 'package:revelador_detetive/scan_qr_page.dart';
 
 import 'defaults/ad-units.dart';
-import 'defaults/strings.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.title}) : super(key: key);
+  HomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -17,8 +18,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String _valueResult = "";
 
-  Future<String> _getResult() async {
-    return await scanner.scan();
+  ReveladorBannerAd _bannerAd = AdUnits.getBannerAd(AdUnits.androidBanner);
+
+  @override
+  void dispose() {
+    _bannerAd.dispose();
+    super.dispose();
   }
 
   Future<void> _showMyDialog() async {
@@ -37,7 +42,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text(
                 'OK',
                 style: TextStyle(color: Colors.black87),
@@ -52,23 +57,43 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void scanCode() {
-    AdUnits.instatiateInterstitialAd();
-    AdUnits.interstitial.load();
-    _getResult().then((onValue) {
-      setState(() {
-        try {
-          var value = int.parse(onValue);
-          if (value <= 27 && value > 0) {
-            _valueResult = Strings.cards[value - 1];
-          } else {
-            _valueResult = 'Código inválido';
-          }
-        } catch (e) {
+  Future<PermissionStatus> _getCameraPermission() async {
+    var status = await Permission.camera.status;
+    if (!status.isGranted) {
+      final result = await Permission.camera.request();
+      return result;
+    } else {
+      return status;
+    }
+  }
+
+  void scanCode() async {
+    //AdUnits.createInterstitialAd();
+
+    PermissionStatus status = await _getCameraPermission();
+    if (status.isGranted) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (BuildContext context) => ScanQrPage(onResult: _getResult),
+            fullscreenDialog: true),
+      );
+    }
+
+  }
+
+  Future<void> _getResult(String? onValue) async {
+    setState(() {
+      try {
+        var value = int.parse(onValue!);
+        if (value <= 27 && value > 0) {
+          _valueResult = Strings.cards[value - 1];
+        } else {
           _valueResult = 'Código inválido';
         }
-        AdUnits.showInterstitialAd();
-      });
+      } catch (e) {
+        _valueResult = 'Código inválido';
+      }
+      AdUnits.showInterstitialAd();
     });
   }
 
@@ -80,17 +105,14 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    AdUnits.instatiateBannerAd();
-    AdUnits.banner.load();
-    AdUnits.showBannerAd();
+    super.initState();
+    _bannerAd.load();
 
-    AdUnits.instatiateInterstitialAd();
-    AdUnits.interstitial.load();
+    AdUnits.createInterstitialAd();
   }
 
   @override
   Widget build(BuildContext context) {
-    AdUnits.showBannerAd();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -128,10 +150,10 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Text(
                       '$_valueResult',
-                      style: Theme.of(context).textTheme.display1,
+                      style: Theme.of(context).textTheme.displayMedium,
                     ),
                     Visibility(
-                      visible: _valueResult != null && _valueResult != "",
+                      visible: _valueResult != "",
                       child: Padding(
                         padding: const EdgeInsets.only(left: 8.0),
                         child: IconButton(
@@ -144,6 +166,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
+            AdUnits.getBannerAdWidget(_bannerAd),
           ],
         ),
       ),

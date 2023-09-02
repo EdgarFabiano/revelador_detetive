@@ -6,20 +6,20 @@ class DefaultThemes {
   static final Color primaryLight = Colors.yellow;
   static final Color primaryDark = Colors.black87;
 
-  static ThemeData appTheme(BuildContext context) {
+  static ThemeData appTheme() {
     return ThemeData(
-      brightness: Brightness.light,
-      primaryColor: primaryLight,
-//      secondaryHeaderColor: Colors.yellow,
-//      accentColor: Colors.red,
-    );
+        primaryColor: primaryLight, brightness: Brightness.light,
+        // colorScheme: ColorScheme.fromSwatch(
+        //     primarySwatch: Colors.teal, brightness: Brightness.light, backgroundColor: Colors.white),
+        useMaterial3: true);
   }
 
-  static ThemeData darkTheme(BuildContext context) {
+  static ThemeData darkTheme() {
     return ThemeData(
-      brightness: Brightness.dark,
-      primaryColor: primaryDark,
-    );
+        primaryColor: primaryDark, brightness: Brightness.dark,
+        // colorScheme: ColorScheme.fromSwatch(
+        //     primarySwatch: Colors.teal, brightness: Brightness.dark),
+        useMaterial3: true);
   }
 
 }

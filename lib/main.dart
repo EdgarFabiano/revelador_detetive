@@ -1,15 +1,15 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
-import 'package:firebase_admob/firebase_admob.dart';
+import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:revelador_detetive/defaults/themes.dart';
 
+import 'defaults/ad-units.dart';
 import 'defaults/strings.dart';
 import 'home-page.dart';
-import 'defaults/ad-units.dart';
 
 void main()  {
   WidgetsFlutterBinding.ensureInitialized();
-  FirebaseAdMob.instance.initialize(appId: AdUnits.getAppId());
+  MobileAds.instance.initialize();
   runApp(MyApp());
 }
 
@@ -17,26 +17,22 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return DynamicTheme(
-      defaultBrightness: Brightness.light,
-      data: (brightness) => new ThemeData(
-        primarySwatch: DefaultThemes.primaryLight,
-        brightness: brightness,
-        pageTransitionsTheme: PageTransitionsTheme(builders: {
-          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-        }),
-      ),
-      themedWidgetBuilder: (context, theme) {
-        return MaterialApp(
-          title: Strings.appName,
-          theme: ThemeData(
-            primarySwatch: DefaultThemes.primaryLight,
-          ),
-          home: HomePage(title: Strings.appName),
-          debugShowCheckedModeBanner: false,
-        );
-      },
+    return EasyDynamicThemeWidget(
+      child: ReveladorMaterialApp(),
+    );
+  }
+}
+
+class ReveladorMaterialApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: Strings.appName,
+      theme: DefaultThemes.appTheme(),
+      darkTheme: DefaultThemes.darkTheme(),
+      themeMode: EasyDynamicTheme.of(context).themeMode,
+      home: HomePage(title: Strings.appName),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
