@@ -8,9 +8,9 @@ import 'constants.dart';
 
 class AdUnits {
 
-  static final String androidApiKey = "ca-app-pub-9921693044196842~1268647503";
-  static final String androidBanner = "ca-app-pub-9921693044196842/9987723705";
-  static final String androidInterstitial = "ca-app-pub-9921693044196842/2004457756";
+  static final String androidApiKey = "ca-app-pub-5932227223136302~8152965106";
+  static final String androidBanner = "ca-app-pub-5932227223136302/2326129137";
+  static final String androidInterstitial = "ca-app-pub-5932227223136302/9040476995";
 
   static const int maxFailedLoadAttempts = 3;
   static int _numInterstitialLoadAttempts = 0;

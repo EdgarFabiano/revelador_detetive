@@ -128,44 +128,52 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            GestureDetector(
-              onTap: scanCode,
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: Column(
-                    children: [
-                      Icon(Icons.camera_alt),
-                      Text("Escanear código"),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 50.0),
-              child: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '$_valueResult',
-                      style: Theme.of(context).textTheme.displayMedium,
-                    ),
-                    Visibility(
-                      visible: _valueResult != "",
+            Expanded(child: Container()),
+            Center(
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: scanCode,
+                    child: Card(
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: IconButton(
-                          onPressed: clear,
-                          icon: Icon(Icons.clear),
+                        padding: const EdgeInsets.all(30.0),
+                        child: Column(
+                          children: [
+                            Icon(Icons.camera_alt),
+                            Text("Escanear código"),
+                          ],
                         ),
                       ),
-                    )
-                  ],
-                ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 50.0),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '$_valueResult',
+                            style: Theme.of(context).textTheme.displayMedium,
+                          ),
+                          Visibility(
+                            visible: _valueResult != "",
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: IconButton(
+                                onPressed: clear,
+                                icon: Icon(Icons.clear),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
+            Expanded(child: Container()),
             AdUnits.getBannerAdWidget(_bannerAd),
           ],
         ),
